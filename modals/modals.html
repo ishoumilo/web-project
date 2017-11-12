@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    
+    <meta charset="utf-8">
+<title>8 Dragons</title>
+<meta name="viewport" content="width=device-width">
+<link href="../css/init.css" rel="stylesheet">
+<script src="../js/bundle.js"></script>
+
+
+    
+</head>
+<body>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="helper">
+        
+            
+                <header class="header header--unlogged">
+  
+    <div class="header__top--enter">
+    <div class="header__top__links">
+        <a href="#" class="header__top--login">Login</a>
+        <a href="#" class="button button--s1 button--t1" data-text=""><span>Register</span></a>
+        <div class="header__langs" data-lang>
+            <p class="header__langs__toggler ru">
+                <span>En</span>
+            </p>
+            <ul class="header__langs__list" style="display: none">
+                <li class="header__langs__item eng">
+                    <a href="#">Ru</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</header>
+            
+        
+        <main class="main">
+            
+<div class="modals main-bg">
+  <div class="container">
+    <div class="modals__list">
+      <a href="#" class="button button--s6 button--t1" data-modal="{&quot;id&quot;: &quot;login_error&quot;, &quot;width&quot;:412, &quot;height&quot;:413, &quot;source&quot;:&quot;/modals/login_error/login_error.html&quot;, &quot;title&quot;: &quot;&quot;, &quot;classes&quot;: {&quot;ui-dialog&quot;:&quot;ui-dialog-login_error&quot;}}">login error</a>
+      <a href="#" class="button button--s6 button--t1" data-modal="{&quot;id&quot;: &quot;games_session_close&quot;, &quot;width&quot;:412, &quot;height&quot;:350, &quot;source&quot;:&quot;/modals/games_session_close/games_session_close.html&quot;, &quot;title&quot;: &quot;&quot;, &quot;classes&quot;: {&quot;ui-dialog&quot;:&quot;ui-dialog-games_session_close&quot;}}">Games session close</a>
+      <a href="#" class="button button--s6 button--t1" data-modal="{&quot;id&quot;: &quot;games_balance_in_game&quot;, &quot;width&quot;:412, &quot;minHeight&quot;:542, &quot;source&quot;:&quot;/modals/games_balance_in_game/games_balance_in_game.html&quot;, &quot;title&quot;: &quot;&quot;, &quot;classes&quot;: {&quot;ui-dialog&quot;:&quot;ui-dialog-games_balance_in_game&quot;}}">Games balance in game</a>
+      <a href="#" class="button button--s6 button--t1" data-modal="{&quot;id&quot;: &quot;games_balance_unknown&quot;, &quot;width&quot;:412, &quot;minHeight&quot;:522, &quot;source&quot;:&quot;/modals/games_balance_unknown/games_balance_unknown.html&quot;, &quot;title&quot;: &quot;&quot;, &quot;classes&quot;: {&quot;ui-dialog&quot;:&quot;ui-dialog-games_balance_unknown&quot;}}">Games balance unknown</a>
+      <a href="#" class="button button--s6 button--t1" data-modal="{&quot;id&quot;: &quot;transactions_deposit_form&quot;, &quot;width&quot;:412, &quot;minHeight&quot;:453, &quot;source&quot;:&quot;/modals/transactions_deposit_form/transactions_deposit_form.html&quot;, &quot;title&quot;: &quot;&quot;, &quot;classes&quot;: {&quot;ui-dialog&quot;:&quot;ui-dialog-transactions&quot;}}">trans deposit form</a>
+      <a href="#" class="button button--s6 button--t1" data-modal="{&quot;id&quot;: &quot;transactions_cashout_form&quot;, &quot;width&quot;:412, &quot;minHeight&quot;:578, &quot;source&quot;:&quot;/modals/transactions_cashout_form/transactions_cashout_form.html&quot;, &quot;title&quot;: &quot;&quot;, &quot;classes&quot;: {&quot;ui-dialog&quot;:&quot;ui-dialog-transactions ui-dialog-cashout&quot;}}">trans cashout form</a>
+      <a href="#" class="button button--s6 button--t1" data-modal="{&quot;id&quot;: &quot;transactions_deposit_confirmation&quot;, &quot;width&quot;:412, &quot;minHeight&quot;:476, &quot;source&quot;:&quot;/modals/transactions_deposit_confirmation/transactions_deposit_confirmation.html&quot;, &quot;title&quot;: &quot;&quot;, &quot;classes&quot;: {&quot;ui-dialog&quot;:&quot;ui-dialog-transactions ui-dialog-confirm&quot;}}">trans deposit confirm</a>
+      <a href="#" class="button button--s6 button--t1" data-modal="{&quot;id&quot;: &quot;transactions_cashout_confirmation&quot;, &quot;width&quot;:412, &quot;minHeight&quot;:476, &quot;source&quot;:&quot;/modals/transactions_cashout_confirmation/transactions_cashout_confirmation.html&quot;, &quot;title&quot;: &quot;&quot;, &quot;classes&quot;: {&quot;ui-dialog&quot;:&quot;ui-dialog-transactions ui-dialog-confirm&quot;}}">trans cashout confirm</a>
+    </div>
+  </div>
+</div>
+
+<script>
+    (function ($, window) {
+
+        "use strict";
+
+        var namespace = "ceModal";
+
+        var defaults = {
+
+            template: "<div class='modal'></div>",
+            loadingClass: "modal--loading",
+            content: undefined,
+            source: undefined,
+            multiple: false,
+            destroy: false,
+            wait: true,
+
+            // jui dialog options
+            modal: true,
+            position: {my: "center", at: "center", of: window, collision: "flipfit"},
+            autoOpen: true,
+            draggable: false,
+            resizable: false,
+            show: {effect: "fade", duration: 300},
+            hide: {effect: "fade", duration: 150}
+
+        };
+
+        function Modal(options) {
+
+            this.id = undefined;
+            this.$object = undefined;
+            this.options = options || {};
+
+            this.create = function (callback) {
+
+                this.id = this.options.id || undefined;
+                this.$object = $(this.options.template);
+
+                if (this.id === undefined) {
+                    this.id = this.$object.attr("id");
+                } else {
+                    this.$object.attr("id", this.id);
+                }
+
+                this.$object.addClass("modal");
+
+                if (this.options.content !== undefined) {
+                    this.$object.html(this.options.content);
+                }
+
+                if (!this.store()) {
+                    return false;
+                }
+
+                if (this.options.source !== undefined) {
+                    this.preload(this.options.wait, callback);
+                } else {
+                    if (callback instanceof Function) {
+                        callback.call(this)
+                    }
+                }
+
+                // relocation async hack working on different throttled connections
+                this.$object.on("DOMSubtreeModified dialogfocus", {modal: this}, function (event) {
+                    event.data.modal.relocate();
+                });
+
+                return this;
+            };
+
+            this.open = function (callback) {
+
+                if (this.options.multiple !== true) {
+                    $.ceModal().closeAll();
+                }
+
+                this.options.modal = !this.options.multiple;
+
+                if (this.$object !== undefined) {
+                    this.$object.dialog(this.options);
+                    if (callback instanceof Function) {
+                        callback.call(this);
+                    }
+                }
+
+                return this;
+            };
+
+            this.close = function (callback) {
+
+                if (this.options.destroy === true) {
+                    this.$object.dialog("destroy");
+                    this.$object = undefined;
+                    this.store();
+                } else {
+                    this.$object.dialog("close");
+                }
+
+                if (callback instanceof Function) {
+                    callback.call(this);
+                }
+
+                return this;
+            };
+
+            this.preload = function (wait, callback) {
+
+                wait = wait || false;
+                callback = callback || undefined;
+
+                var modal = this;
+
+                if (
+                        wait !== true
+                        && callback instanceof Function
+                ) {
+                    modal.$object.addClass(modal.options.loadingClass);
+
+                    // relocation async hack working on different throttled connections
+                    // modal.$object.on("DOMSubtreeModified dialogfocus", function () {
+                    //     modal.relocate();
+                    // });
+
+                    callback.call(modal);
+                }
+
+                if (modal.$object !== undefined) {
+                    modal.$object.load(this.options.source, function () {
+                        if (
+                                wait === true
+                                && callback instanceof Function
+                        ) {
+                            callback.call(modal);
+                        }
+                        modal.$object.removeClass(modal.options.loadingClass);
+                    });
+                }
+
+                return true;
+            };
+
+            this.isOpen = function () {
+                return this.$object !== undefined && this.$object.dialog("instance")
+                        ? this.$object.dialog("isOpen")
+                        : false;
+            };
+
+            this.relocate = function () {
+                if (this.$object !== undefined && this.$object.dialog("instance")) {
+                    this.options.position = this.options.position || defaults.position;
+                    this.$object.dialog("option", "position", this.options.position);
+                }
+            };
+
+            this.store = function () {
+                var modals = $(window).data("modals") || {};
+                modals[this.id] = this;
+                $(window).data("modals", modals);
+                return this;
+            };
+        }
+
+        $.ceModal = function (options) {
+            defaults = $.extend({}, defaults, options || {});
+            return {
+                defaults: defaults,
+                create: function (options) {
+                    $(window).trigger("create." + namespace, [options]);
+                    return this;
+                },
+                open: function (options) {
+                    $(window).trigger("open." + namespace, [options]);
+                    return this;
+                },
+                close: function (options) {
+                    $(window).trigger("close." + namespace, [options]);
+                    return this;
+                },
+                destroy: function (options) {
+                    options = options || {};
+                    options.destroy = true;
+                    return this.close(options);
+                },
+                find: function (options) {
+                    options = options || {};
+                    var modals = $(window).data("modals") || {};
+                    return modals[options.id || undefined] || undefined;
+                },
+                closeAll: function () {
+                    $.each($(window).data("modals") || {}, function (id, modal) {
+                        if (
+                                modal instanceof Modal
+                                && modal.$object !== undefined
+                                && modal.$object.dialog("instance")
+                                && modal.$object.dialog("isOpen")
+                        ) {
+                            $(window).trigger("close." + namespace, [{
+                                id: modal.id,
+                                destroy: false
+                            }]);
+                        }
+                    });
+                }
+            };
+        };
+
+        $(window).on("orientationchange", function () {
+            $.each($(window).data("modals") || {}, function (id, modal) {
+                if (
+                        modal instanceof Modal
+                        && modal.$object !== undefined
+                        && modal.$object.dialog("instance")
+                        && modal.$object.dialog("isOpen")
+                ) {
+                    modal.relocate();
+                }
+            });
+        });
+
+        $(window).on("create." + namespace, function (event, options, callback) {
+
+            var modal = $.ceModal().find(options);
+
+            if (modal instanceof Modal === false) {
+                options = $.extend({}, defaults, options || {});
+                modal = new Modal(options);
+            } else {
+                modal.options = $.extend({}, modal.options, options || {});
+            }
+
+            modal.create(function () {
+                $(window).trigger("created." + namespace, [this]);
+                if (callback instanceof Function) {
+                    callback.call(this);
+                }
+            });
+
+        });
+
+        $(window).on("open." + namespace, function (event, options) {
+
+            var callback = function () {
+                $(window).trigger("opened." + namespace, [this]);
+            };
+
+            var modal = $.ceModal().find(options);
+
+            if (modal instanceof Modal === false) {
+                options = $.extend({}, defaults, options || {});
+            }
+
+            if (
+                    modal instanceof Modal
+                    && modal.$object !== undefined
+            ) {
+                modal.open(callback);
+            } else {
+                $(window).trigger("create." + namespace, [options, function () {
+                    if (this instanceof Modal) {
+                        this.open(callback);
+                    }
+                }]);
+            }
+
+        });
+
+        $(window).on("close." + namespace, function (event, options) {
+
+            var modal = $.ceModal().find(options);
+
+            if (
+                    modal instanceof Modal
+                    && modal.$object !== undefined
+                    && modal.$object.dialog("instance")
+            ) {
+                modal.options = $.extend(modal.options, options || {});
+                modal.close(function () {
+                    var eventName = this.options.destroy === true
+                            ? "destroyed." + namespace
+                            : "closed." + namespace;
+
+                    $(window).trigger(eventName, [this]);
+                });
+            }
+
+        });
+
+        $(document).on("click", "[data-modal], [data-modal-open]", function (event) {
+            event.preventDefault();
+            var options = $(this).data("modal") || {};
+            options = $(this).data("modal-open") || options;
+            if ($(this).attr("href") && !options.source) {
+                options.source = $(this).attr("href");
+            }
+            $.ceModal().open(options);
+        });
+
+        $(document).on("click", "[data-modal-create]", function (event) {
+            event.preventDefault();
+            var options = $(this).data("modal-create") || {};
+            if ($(this).attr("href") && !options.source) {
+                options.source = $(this).attr("href");
+            }
+            $.ceModal().create(options);
+        });
+
+        $(document).on("click", "[data-modal-close]", function (event) {
+            event.preventDefault();
+            $(this).closest('.ui-dialog-content').dialog('close'); 
+            $.ceModal().close($(this).data("modal-close") || {});
+        });
+
+        $(document).on("click", ".ui-widget-overlay", function (event) {
+            event.preventDefault();
+            $.ceModal().closeAll();
+        });
+
+    })(jQuery, window);
+</script>
+
+
+        </main>
+        
+            
+                <div class="footer">
+    <div class="container">
+        <div class="footer__layout">
+            <ul class="footer__menu__list">
+                <li class="footer__menu__item"><a href="#">Help</a></li>
+                <li class="footer__menu__item"><a href="#">Contact</a></li>
+            </ul>
+            <div class="footer__logo"><img src="/img/master/footer/bitcoin-logo.png" alt="footer__logo"></div>
+            <p class="footer__copy">© 2017 . All rights reserved.</p>
+        </div>
+    </div>
+</div>
+            
+        
+    </div>
+</body>
+</html>
+
+
